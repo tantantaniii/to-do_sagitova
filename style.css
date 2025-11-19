@@ -1,0 +1,645 @@
+:root {
+  --bg: #ffffff;
+  --text: #111827;
+  --card-bg: #ffffff;
+  --border: #e2e8f0;
+  --shadow: 0 1px 2px rgba(0,0,0,0.05);
+  --btn-bg: #f3f4f6;
+  --btn-hover: #e5e7eb;
+  --accent: #1d4ed8;
+  --completed-text: #9ca3af;
+  --sidebar-bg: #f8fafc;
+  --sidebar-active: #fef2fe;
+  --sidebar-border: #e2e8f0;
+  --modal-bg: #ffffff;
+  --modal-text: #111827;
+  --calendar-bg: #ffffff;
+  --calendar-border: #e2e8f0;
+  --calendar-day-bg: #f8fafc;
+  --calendar-day-hover: #e2e8f0;
+  --calendar-today: #dbeafe;
+  --calendar-event-bg: #fef2fe;
+}
+
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --text: #f1f5f9;
+  --card-bg: #1e293b;
+  --border: #334155;
+  --shadow: 0 1px 3px rgba(0,0,0,0.2);
+  --btn-bg: #334155;
+  --btn-hover: #475569;
+  --accent: #60a5fa;
+  --completed-text: #94a3b8;
+  --sidebar-bg: #1e293b;
+  --sidebar-active: #334155;
+  --sidebar-border: #475569;
+  --modal-bg: #1e293b;
+  --modal-text: #f1f5f9;
+  --calendar-bg: #1e293b;
+  --calendar-border: #334155;
+  --calendar-day-bg: #1e293b;
+  --calendar-day-hover: #334155;
+  --calendar-today: #1e3a8a;
+  --calendar-event-bg: #3b0040;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif;
+  line-height: 1.5;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.app-container {
+  display: flex;
+  height: 100vh;
+  max-width: 100vw;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 260px;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--sidebar-border);
+}
+
+.sidebar-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0.5rem 0;
+}
+
+.sidebar-nav li a {
+  display: block;
+  padding: 0.5rem 1.25rem;
+  color: var(--text);
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: all 0.2s;
+}
+
+.sidebar-nav li a:hover {
+  background: var(--btn-bg);
+}
+
+.sidebar-nav li a.active {
+  background: var(--sidebar-active);
+  border-left-color: var(--accent);
+  font-weight: 500;
+}
+
+.section-title {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.875rem;
+  color: var(--completed-text);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.project-list {
+  list-style: none;
+  padding: 0.25rem 0;
+}
+
+.project-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1.25rem;
+  color: var(--text);
+  cursor: pointer;
+  position: relative;
+}
+
+.project-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-actions {
+  display: none;
+  gap: 0.25rem;
+}
+
+.project-item:hover .project-actions {
+  display: flex;
+}
+
+.project-actions button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: var(--completed-text);
+}
+
+.project-actions button:hover {
+  color: var(--text);
+}
+
+.btn-text {
+  background: none;
+  border: none;
+  color: var(--accent);
+  padding: 0.5rem 1.25rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  text-align: left;
+  width: 100%;
+}
+
+.btn-text:hover {
+  background: var(--btn-bg);
+}
+
+.sidebar-footer {
+  padding: 1rem 0;
+  border-top: 1px solid var(--sidebar-border);
+}
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.main-header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.header-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--btn-bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+
+.icon-btn:hover {
+  background: var(--btn-hover);
+}
+
+/* --- Список задач --- */
+.task-list-container {
+  position: relative;
+}
+
+.task-list {
+  list-style: none;
+  margin-bottom: 1rem;
+}
+
+.task-item {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: opacity 0.3s, transform 0.2s;
+}
+
+.task-item.completed .task-text {
+  text-decoration: line-through;
+  color: var(--completed-text);
+}
+
+/* Цвет фона задачи по категории */
+.task-item.category-personal { background: #fef2fe; }
+.task-item.category-work { background: #dbeafe; }
+.task-item.category-study { background: #fef3c7; }
+
+[data-theme="dark"] .task-item.category-personal { background: #3b0040; }
+[data-theme="dark"] .task-item.category-work { background: #0a3a6a; }
+[data-theme="dark"] .task-item.category-study { background: #5a3a00; }
+
+.task-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.task-checkbox {
+  margin-top: 0.25rem;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
+.task-text {
+  flex: 1;
+  font-size: 1.05rem;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.task-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: var(--completed-text);
+  flex-wrap: wrap;
+}
+
+.task-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.task-actions button {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--btn-bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.task-actions button:hover {
+  background: var(--btn-hover);
+}
+
+/* --- Заглушка --- */
+.empty-state {
+  display: none;
+  text-align: center;
+  padding: 3rem 1rem;
+  font-size: 1.25rem;
+  color: var(--completed-text);
+  background: var(--card-bg);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  margin: 1rem 0;
+}
+
+/* --- Календарь --- */
+.calendar-container {
+  display: none;
+  background: var(--calendar-bg);
+  border: 1px solid var(--calendar-border);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--calendar-border);
+}
+
+.nav-btn {
+  background: var(--btn-bg);
+  border: none;
+  padding: 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.nav-btn:hover {
+  background: var(--btn-hover);
+}
+
+.view-switcher {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.view-btn {
+  background: var(--btn-bg);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.view-btn:hover {
+  background: var(--btn-hover);
+}
+
+.view-btn.active {
+  background: var(--accent);
+  color: white;
+}
+
+.week-navigation {
+  display: none;
+  justify-content: space-between;
+  margin: 0.5rem 0 1rem;
+  gap: 0.5rem;
+}
+
+.week-navigation .nav-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+.calendar-day {
+  background: var(--calendar-day-bg);
+  border: 1px solid var(--calendar-border);
+  border-radius: 8px;
+  padding: 0.5rem;
+  min-height: 100px;
+  overflow-y: auto;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+}
+
+.calendar-day:hover {
+  background: var(--calendar-day-hover);
+}
+
+.calendar-day.today {
+  background: var(--calendar-today);
+  border: 2px solid var(--accent);
+}
+
+.calendar-day-number {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
+  margin: 0 auto 0.5rem;
+  color: var(--text);
+  font-family: inherit;
+}
+
+.calendar-day-number.today {
+  background: var(--accent);
+  color: white;
+}
+
+/* Стили для задач в календаре */
+.calendar-event {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  background: rgba(254, 242, 254, 0.7); /* Личное */
+  border: 1px solid rgba(254, 242, 254, 0.5);
+  color: var(--text);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  word-break: break-all;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+[data-theme="dark"] .calendar-event {
+  background: rgba(59, 0, 64, 0.3);
+  border: 1px solid rgba(59, 0, 64, 0.5);
+  color: #f1f5f9;
+}
+
+.calendar-event.category-work {
+  background: rgba(219, 234, 254, 0.7);
+  border: 1px solid rgba(219, 234, 254, 0.5);
+}
+
+[data-theme="dark"] .calendar-event.category-work {
+  background: rgba(10, 58, 106, 0.3);
+  border: 1px solid rgba(10, 58, 106, 0.5);
+}
+
+.calendar-event.category-study {
+  background: rgba(254, 243, 199, 0.7);
+  border: 1px solid rgba(254, 243, 199, 0.5);
+}
+
+[data-theme="dark"] .calendar-event.category-study {
+  background: rgba(90, 58, 0, 0.3);
+  border: 1px solid rgba(90, 58, 0, 0.5);
+}
+
+.calendar-event:hover {
+  background: rgba(254, 242, 254, 0.9);
+}
+
+/* Стили для кнопок в модальном окне задачи */
+.modal-actions button {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.modal-actions button:first-child {
+  background: var(--accent);
+  color: white;
+}
+
+.modal-actions button:last-child {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+/* Модальное окно */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: var(--modal-bg);
+  padding: 1.5rem;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90vw;
+  box-shadow: var(--shadow);
+  color: var(--modal-text);
+}
+
+.modal-content h3 {
+  margin-bottom: 1rem;
+  font-size: 1.125rem;
+  font-weight: bold;
+}
+
+.modal-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.modal-label {
+  font-weight: bold;
+  min-width: 100px;
+  color: var(--completed-text);
+}
+
+#modal-task-description {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: var(--btn-bg);
+  padding: 0.5rem;
+  border-radius: 6px;
+  font-family: inherit;
+  line-height: 1.4;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.modal-actions button {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.modal-actions button:first-child {
+  background: var(--accent);
+  color: white;
+}
+
+.modal-actions button:last-child {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.close {
+  float: right;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: var(--accent);
+}
+
+/* Модальное окно добавления задачи */
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  background: var(--modal-bg);
+  color: var(--modal-text);
+}
+
+.modal-content input:focus,
+.modal-content textarea:focus,
+.modal-content select:focus {
+  outline: 2px solid var(--accent);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--sidebar-border);
+  }
+
+  .main-content {
+    padding: 1rem;
+  }
+
+  .modal-content {
+    width: 90%;
+    padding: 1rem;
+  }
+
+  .time-picker {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .description-box textarea {
+    min-height: 60px;
+  }
+
+  .calendar-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .calendar-day {
+    min-height: 150px;
+  }
+}

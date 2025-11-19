@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SimpleTask — Персональный список дел</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <!-- Боковое меню -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>SimpleTask</h2>
+      </div>
+
+      <nav class="sidebar-nav">
+        <ul>
+          <li><a href="#" data-filter="today" class="active">📅 Сегодня</a></li>
+          <li><a href="#" data-filter="inbox">📥 Входящие</a></li>
+          <li><a href="#" data-filter="upcoming">🗓 Предстоящее</a></li>
+          <li><a href="#" data-filter="all">📋 Все задачи</a></li>
+          <li><a href="#" data-filter="completed">✅ Выполнено</a></li>
+        </ul>
+      </nav>
+
+      <div class="section-title">Мои проекты</div>
+      <ul id="project-list" class="project-list"></ul>
+
+      <div class="sidebar-footer">
+        <button id="add-project-btn" class="btn-text">+ Добавить проект</button>
+      </div>
+    </aside>
+
+    <!-- Основной контент -->
+    <main class="main-content">
+      <header class="main-header">
+        <h1 id="current-view-title">Сегодня</h1>
+        <div class="header-controls">
+          <button id="add-task-btn" class="icon-btn" title="Добавить задачу">➕</button>
+          <button id="export-btn" class="icon-btn" title="Экспорт в JSON">📤</button>
+          <button id="theme-toggle" class="icon-btn" title="Тёмная тема">🌙</button>
+        </div>
+      </header>
+
+      <!-- Список задач -->
+      <div id="task-list-container" class="task-list-container">
+        <ul id="task-list" class="task-list"></ul>
+        <div id="empty-state" class="empty-state">
+          Задач нет, ты свободен, Добби! 😄🧦
+        </div>
+      </div>
+
+      <!-- Календарь (скрыт по умолчанию) -->
+      <div id="calendar-container" class="calendar-container" style="display: none;">
+        <div class="calendar-header">
+          <button id="prev-month" class="nav-btn">◀</button>
+          <h3 id="calendar-month-year">Ноябрь 2025</h3>
+          <button id="next-month" class="nav-btn">▶</button>
+          <div class="view-switcher">
+            <button id="view-month" class="view-btn active">Месяц</button>
+            <button id="view-week" class="view-btn">Неделя</button>
+          </div>
+        </div>
+
+        <!-- Кнопки навигации по неделям (появляются только в режиме "Неделя") -->
+        <div id="week-navigation" class="week-navigation" style="display: none;">
+          <button id="prev-week" class="nav-btn">◀ Предыдущая</button>
+          <button id="next-week" class="nav-btn">Следующая ▶</button>
+        </div>
+
+        <div id="calendar-grid" class="calendar-grid"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Модальное окно добавления задачи -->
+  <div id="add-task-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <input type="text" id="task-title" placeholder="Добавьте название задачи" required />
+      <div class="modal-row">
+        <div class="time-picker">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <input type="datetime-local" id="task-datetime" />
+          <span class="repeat-label">Не повторять</span>
+        </div>
+      </div>
+      <div class="modal-row">
+        <div class="description-box">
+          <textarea id="task-description" placeholder="Описание (необязательно)"></textarea>
+        </div>
+      </div>
+      <div class="modal-row">
+        <select id="task-category" class="category-select"></select>
+      </div>
+      <button id="save-task-btn" class="save-btn">Сохранить задачу</button>
+    </div>
+  </div>
+
+  <!-- Модальное окно редактирования категории -->
+  <div id="edit-category-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h3>Редактировать проект</h3>
+      <input type="text" id="edit-category-name" placeholder="Название проекта" />
+      <div class="color-picker">
+        <label>Цвет:</label>
+        <input type="color" id="edit-category-color" value="#fef2fe" />
+      </div>
+      <div class="modal-buttons">
+        <button id="save-category-btn">Сохранить</button>
+        <button id="cancel-category-btn">Отмена</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно просмотра задачи -->
+<div id="task-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span class="close" onclick="closeTaskModal()">&times;</span>
+    <h3 id="modal-task-title">Заголовок задачи</h3>
+    <div class="modal-row">
+      <div class="modal-label">Категория:</div>
+      <div id="modal-task-category">Личное</div>
+    </div>
+    <div class="modal-row">
+      <div class="modal-label">Дата и время:</div>
+      <div id="modal-task-datetime">—</div>
+    </div>
+    <div class="modal-row">
+      <div class="modal-label">Описание:</div>
+      <div id="modal-task-description">Нет описания</div>
+    </div>
+    <div class="modal-actions">
+      <button onclick="editTask(currentTaskId)">✏️ Редактировать</button>
+      <button onclick="deleteTask(currentTaskId)">🗑️ Удалить</button>
+    </div>
+  </div>
+</div>
+
+  <script src="script.js"></script>
+</body>
+</html>
